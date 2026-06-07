@@ -32,6 +32,7 @@ D:\ai-agent-nav\
 ├── frontend\
 │   ├── index.html     ← 公开导航页（API 驱动渲染）/ Public Navigation Page
 │   └── admin.html     ← 管理后台（登录 + CRUD）/ Admin Panel
+│── index.html         ← 纯静态版本（数据硬编码）
 └── README.md          ← 本文件 / This File
 ```
 
