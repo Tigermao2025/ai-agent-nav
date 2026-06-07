@@ -24,15 +24,17 @@ A comprehensive China AI resource navigation website featuring **78 Chinese AI s
 ## 📁 项目结构 / Project Structure
 
 ```
-D:\ai-agent-nav\
+F:\ai-agent-nav\
 ├── backend\
 │   ├── app.py         ← Flask 后端 API 服务（端口 5000）/ Flask Backend API (Port 5000)
 │   ├── seed.py        ← 数据库初始化（创建表 + 导入 78 个站点）/ DB Initialization
+│   ├── requirements.txt ← Python 依赖列表 / Python Dependencies
 │   └── nav.db         ← SQLite 数据库文件 / SQLite Database
 ├── frontend\
 │   ├── index.html     ← 公开导航页（API 驱动渲染）/ Public Navigation Page
 │   └── admin.html     ← 管理后台（登录 + CRUD）/ Admin Panel
-│── index.html         ← 纯静态版本（数据硬编码）
+├── Dockerfile         ← Docker 构建文件 / Docker Build File
+├── docker-compose.yml ← Docker 编排配置（推荐使用）/ Docker Compose Config
 └── README.md          ← 本文件 / This File
 ```
 
@@ -99,6 +101,76 @@ env FLASK_RUN_PORT=8080 python app.py
 
 > ⚠️ 修改端口后，浏览器访问地址也要相应调整，例如改为 `http://localhost:8080`  
 > ⚠️ After changing port, update browser URL accordingly, e.g., `http://localhost:8080`
+
+### 🐳 Docker 部署 / Docker Deployment
+
+项目支持 Docker 部署，适合在飞牛 NAS、群晖等设备上运行。
+
+**方法 1️⃣ 使用 docker-compose（推荐）**
+
+```bash
+# 在项目根目录下执行
+cd ai-agent-nav
+docker compose up -d
+```
+
+**方法 2️⃣ 手动构建运行**
+
+```bash
+cd ai-agent-nav
+docker build -t ai-nav .
+docker run -d \
+  --name ai-agent-nav \
+  -p 5000:5000 \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/frontend:/app/frontend \
+  --restart unless-stopped \
+  ai-nav
+```
+
+### 🏠 飞牛 NAS 部署指南 / Deploy on Feiniu NAS
+
+飞牛 NAS（fnOS）基于 Debian Linux，自带 Docker 环境。推荐使用 Docker 部署：
+
+**步骤 1：上传项目**
+- 通过飞牛 NAS 的 Web 文件管理或 SMB 共享，将 `ai-agent-nav` 文件夹上传到 NAS
+- 建议放在 `/vol1/1000/docker/ai-agent-nav/` 或任意 Docker 目录下
+
+**步骤 2：SSH 进入 NAS**
+```bash
+ssh 你的用户名@飞牛IP地址
+```
+
+**步骤 3：进入项目目录并启动**
+```bash
+cd /vol1/1000/docker/ai-agent-nav
+docker compose up -d
+```
+
+**步骤 4：设置开机自启（可选）**
+
+检查 Docker 是否已设置为开机自启：
+```bash
+sudo systemctl is-enabled docker
+```
+
+如果返回 `disabled`，执行：
+```bash
+sudo systemctl enable docker
+```
+
+> 💡 docker-compose.yml 中已配置 `restart: unless-stopped`，只要 Docker 开机启动，容器就会自动跟着起来。
+
+**步骤 5：访问服务**
+- 在浏览器打开 `http://飞牛IP地址:5000`
+- 管理后台：`http://飞牛IP地址:5000/admin`
+- 如无法访问，检查飞牛 NAS 的防火墙是否放行了 5000 端口
+
+**步骤 5（可选）：使用反向代理**
+在飞牛 NAS 的应用中心或 Nginx 中配置反向代理，将 `ai.你的域名.com` 指向 `http://localhost:5000`
+
+> 💡 **数据持久化**：数据库文件保存在 `./data/nav.db`，升级容器时不会丢失
+> 💡 **热更新前端**：前端文件通过卷映射，修改 `./frontend/` 下的文件后立即生效
 
 ---
 
