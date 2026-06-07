@@ -179,6 +179,7 @@
       <div class="nav-item active" onclick="switchTab('dashboard',this)">📊 仪表盘</div>
       <div class="nav-item" onclick="switchTab('categories',this)">📂 分类管理</div>
       <div class="nav-item" onclick="switchTab('sites',this)">🔗 站点管理</div>
+      <div class="nav-item" onclick="switchTab('password',this)">🔑 修改密码</div>
     </div>
     <div class="admin-content" id="adminContent">
       <!-- Dynamic content here -->
@@ -250,6 +251,7 @@ function switchTab(tab, el) {
   if (tab === 'dashboard') renderDashboard();
   else if (tab === 'categories') renderCategories();
   else if (tab === 'sites') renderSites();
+  else if (tab === 'password') renderPassword();
 }
 
 // ─── API Helper ────────────────────────────────────────────────────
@@ -474,6 +476,57 @@ document.getElementById('modalOverlay').addEventListener('click', function(e) {
 
 // ─── Init ──────────────────────────────────────────────────────────
 if (token) showAdmin();
+
+// ─── Password Change ──────────────────────────────────────────────
+function renderPassword() {
+  const html = `
+    <div class="toolbar"><h3>🔑 修改密码</h3></div>
+    <div class="login-box" style="max-width:420px;margin:20px auto;">
+      <div class="form-group">
+        <label>当前密码</label>
+        <input type="password" id="oldPass" placeholder="输入旧密码" onkeydown="if(event.key==='Enter')changePassword()">
+      </div>
+      <div class="form-group">
+        <label>新密码（至少6位）</label>
+        <input type="password" id="newPass" placeholder="输入新密码" onkeydown="if(event.key==='Enter')changePassword()">
+      </div>
+      <div class="form-group">
+        <label>确认新密码</label>
+        <input type="password" id="confirmPass" placeholder="再次输入新密码" onkeydown="if(event.key==='Enter')changePassword()">
+      </div>
+      <button class="btn btn-primary" style="width:100%" onclick="changePassword()">修改密码</button>
+      <div id="pwMsg" style="margin-top:12px;text-align:center;"></div>
+    </div>
+  `;
+  document.getElementById('adminContent').innerHTML = html;
+}
+
+async function changePassword() {
+  const oldPw = document.getElementById('oldPass').value;
+  const newPw = document.getElementById('newPass').value;
+  const confirmPw = document.getElementById('confirmPass').value;
+  const msgEl = document.getElementById('pwMsg');
+
+  if (!oldPw || !newPw) { msgEl.innerHTML = '<span style="color:var(--danger)">请填写完整</span>'; return; }
+  if (newPw.length < 6) { msgEl.innerHTML = '<span style="color:var(--danger)">新密码至少6位</span>'; return; }
+  if (newPw !== confirmPw) { msgEl.innerHTML = '<span style="color:var(--danger)">两次输入不一致</span>'; return; }
+
+  try {
+    const res = await api('/api/admin/change-password', {
+      method: 'POST',
+      body: JSON.stringify({ old_password: oldPw, new_password: newPw })
+    });
+    const data = await res.json();
+    if (res.ok) {
+      msgEl.innerHTML = '<span style="color:var(--success)">✅ 密码修改成功！请重新登录</span>';
+      setTimeout(() => doLogout(), 2000);
+    } else {
+      msgEl.innerHTML = `<span style="color:var(--danger)">❌ ${data.error}</span>`;
+    }
+  } catch(e) {
+    msgEl.innerHTML = '<span style="color:var(--danger)">网络错误</span>';
+  }
+}
 
 // ─── Theme Toggle ──────────────────────────────────────────────────
 function toggleTheme() {
