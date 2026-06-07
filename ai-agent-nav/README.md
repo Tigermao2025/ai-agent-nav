@@ -63,36 +63,36 @@ python app.py
 | `http://localhost:5000/admin` | 🔐 管理后台 |
 | `http://localhost:5000/api/categories` | 📡 API - 获取分类及站点 |
 
----
-当前端口在 app.py 最底部第 267 行，默认是 5000：
+### 🔌 修改端口
 
-python
-复制
-app.run(host='0.0.0.0', port=5000, debug=True)
+当前端口默认为 **5000**，如需修改有 3 种方式：
 
-改端口有 3 种方法：
+**方法 1️⃣ 直接改代码**
 
-方法 1️⃣ 直接改代码（最简单）
-打开 F:\ai-agent-nav\backend\app.py，找到最后一行，把 port=5000 改成你想要的端口，比如改成 8080：
+打开 `backend/app.py`，找到最后一行，修改 `port` 参数：
 
-python
-复制
-app.run(host='0.0.0.0', port=8080, debug=True)
-然后重启服务就行了。
+```python
+app.run(host='0.0.0.0', port=8080, debug=True)  # 将 5000 改为你想要的端口
+```
 
-方法 2️⃣ 用命令行参数（不改文件）
-启动时指定端口：
+**方法 2️⃣ 命令行指定（不改文件）**
 
-bash
-复制
-cd /f/ai-agent-nav/backend
+```bash
+cd /ai-agent-nav/backend
 python -c "from app import app; app.run(host='0.0.0.0', port=8080, debug=True)"
-方法 3️⃣ 通过环境变量
-bash
-复制
-cd /f/ai-agent-nav/backend
+```
+
+**方法 3️⃣ 环境变量**
+
+```bash
+cd ai-agent-nav/backend
 env FLASK_RUN_PORT=8080 python app.py
-注意： 改端口后，浏览器访问地址也要跟着变，比如改成 http://localhost:8080。
+```
+
+> ⚠️ 修改端口后，浏览器访问地址也要相应调整，例如改为 `http://localhost:8080`
+
+---
+
 ## 🔧 功能详情
 
 ### 🏠 公开导航页
