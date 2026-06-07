@@ -48,12 +48,12 @@ F:\ai-agent-nav\
 
 ```bash
 # 1. 进入项目目录 / Enter project directory
-cd /ai-agent-nav/backend
+cd ai-agent-nav/backend
 
-# 2. 安装依赖（首次运行）/ Install dependencies (first run)
+# 2. 安装依赖（首次运行）/ Install dependencies (first run）
 pip install flask flask-cors
 
-# 3. 初始化数据库（首次运行，或重置数据）/ Initialize database (first run)
+# 3. 初始化数据库（首次运行，或重置数据）/ Initialize database (first run）
 python seed.py
 
 # 4. 启动服务 / Start server
@@ -85,14 +85,14 @@ app.run(host='0.0.0.0', port=8080, debug=True)  # 将 5000 改为你想要的端
 **方法 2️⃣ 命令行指定（不改文件） / Method 2: CLI argument**
 
 ```bash
-cd /ai-agent-nav/backend
+cd ai-agent-nav/backend
 python -c "from app import app; app.run(host='0.0.0.0', port=8080, debug=True)"
 ```
 
 **方法 3️⃣ 环境变量 / Method 3: Environment variable**
 
 ```bash
-cd /ai-agent-nav/backend
+cd ai-agent-nav/backend
 env FLASK_RUN_PORT=8080 python app.py
 ```
 
@@ -126,12 +126,9 @@ env FLASK_RUN_PORT=8080 python app.py
 
 | 模块 / Module | 功能 / Function |
 |:---|:---|
-| 📊 **仪表盘** | 站点/分类总数统计，各分类站点分布表 |
-| | **Dashboard** - Site/category statistics, distribution table |
-| 📂 **分类管理** | 新增、编辑、删除分类（删除级联删除站点） |
-| | **Category Management** - Create, edit, delete categories |
-| 🔗 **站点管理** | 按分类筛选、新增、编辑、删除站点 |
-| | **Site Management** - Filter by category, create, edit, delete sites |
+| 📊 **仪表盘 / Dashboard** | 站点/分类总数统计，各分类站点分布表 / Site & category statistics |
+| 📂 **分类管理 / Category Management** | 新增、编辑、删除分类（删除级联删除站点） / Create, edit, delete categories (cascade deletes sites) |
+| 🔗 **站点管理 / Site Management** | 按分类筛选、新增、编辑、删除站点 / Filter by category, create, edit, delete sites |
 
 - 所有操作实时写入 SQLite 数据库  
   All operations written to SQLite in real-time
@@ -285,37 +282,5 @@ CREATE TABLE admins (
 
 ## 📝 许可证 / License
 
-本项目采用 **MIT 许可证**，详见 LICENSE 文件。  
-This project is licensed under the **MIT License**. See LICENSE file for details.
-
-```
-MIT License（MIT 许可证）
-
-Copyright (c) 2024 AI Agent Navigation
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-特此授予任何获得本软件及相关文档文件（以下简称"软件"）副本的人免费使用许可，
-可无限制地处理该软件，包括但不限于使用、复制、修改、合并、发布、分发、授权和销售软件副本的权利，
-前提是遵守以下条件：
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-上述版权声明和本许可声明应包含在软件的所有副本或实质部分中。
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-本软件按"原样"提供，不附带任何明示或暗示的担保，
-包括但不限于适销性、特定用途适用性和非侵权性的担保。
-在任何情况下，作者或版权持有人均不对因使用本软件或以任何方式与本软件相关的任何索赔、损害赔偿或其他责任承担责任，
-无论是合同诉讼、侵权行为还是其他方式引起的。
-```
+本项目仅供学习和参考使用。  
+This project is for learning and reference purposes only.
