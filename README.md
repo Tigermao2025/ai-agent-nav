@@ -24,7 +24,7 @@ A comprehensive China AI resource navigation website featuring **78 Chinese AI s
 ## 📁 项目结构 / Project Structure
 
 ```
-F:\ai-agent-nav\
+D:\ai-agent-nav\
 ├── backend\
 │   ├── app.py         ← Flask 后端 API 服务（端口 5000）/ Flask Backend API (Port 5000)
 │   ├── seed.py        ← 数据库初始化（创建表 + 导入 78 个站点）/ DB Initialization
