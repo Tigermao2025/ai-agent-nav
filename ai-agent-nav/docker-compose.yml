@@ -1,0 +1,14 @@
+services:
+  ai-nav:
+    build: .
+    container_name: ai-agent-nav
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      # 持久化数据库，重启不丢失
+      - ./data:/app/data
+      # 可选：映射前端文件，方便直接修改
+      - ./frontend:/app/frontend
+    environment:
+      - DB_PATH=/app/data/nav.db
