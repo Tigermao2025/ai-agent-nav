@@ -103,6 +103,7 @@ env FLASK_RUN_PORT=8080 python app.py
 
 ## 🔧 功能详情 / Features
 项目包含两个版本的首页——根目录的 index.html 是纯静态版本（数据硬编码），frontend/index.html 才是 API 驱动的动态版本。Flask 的 / 路由 serve 的是 frontend/index.html，所以实际运行的是动态版。
+这是一个经典的全栈小项目范本：一个 Flask 文件承担所有后端逻辑（API + 静态文件托管），两个 HTML 文件构成前端（用户端 + 管理端），SQLite 做持久化。麻雀虽小五脏俱全——CRUD、认证、主题切换、响应式都有覆盖。
 ### 🏠 公开导航页 / Public Navigation
 
 - 页面加载时通过 `fetch()` 调用后端 API 获取数据  
