@@ -7,8 +7,8 @@
 
 ## 📋 项目概述 / Project Overview
 
-一个功能完整的国内 AI 资源导航网站，收录 **78 个国内 AI 站点**，分为 **11 个分类**，支持：  
-A comprehensive China AI resource navigation website featuring **78 Chinese AI sites** across **11 categories**, with support for:
+一个功能完整的国内 AI 资源导航网站，收录 **79 个国内 AI 站点**，分为 **11 个分类**，支持：  
+A comprehensive China AI resource navigation website featuring **79 Chinese AI sites** across **11 categories**, with support for:
 
 - **🏠 公开导航页** — 浏览所有 AI 站点，分类展示，点击直达  
   **Public Navigation** — Browse all AI sites with categorized display, click to visit
@@ -27,7 +27,7 @@ A comprehensive China AI resource navigation website featuring **78 Chinese AI s
 F:\ai-agent-nav\
 ├── backend\
 │   ├── app.py         ← Flask 后端 API 服务（端口 5000）/ Flask Backend API (Port 5000)
-│   ├── seed.py        ← 数据库初始化（创建表 + 导入 78 个站点）/ DB Initialization
+│   ├── seed.py        ← 数据库初始化（创建表 + 导入 79 个站点）/ DB Initialization
 │   ├── requirements.txt ← Python 依赖列表 / Python Dependencies
 │   └── nav.db         ← SQLite 数据库文件 / SQLite Database
 ├── frontend\
@@ -166,17 +166,50 @@ sudo systemctl enable docker
 - 管理后台：`http://飞牛IP地址:5000/admin`
 - 如无法访问，检查飞牛 NAS 的防火墙是否放行了 5000 端口
 
-**步骤 5（可选）：使用反向代理**
+**步骤 6（可选）：使用反向代理**
 在飞牛 NAS 的应用中心或 Nginx 中配置反向代理，将 `ai.你的域名.com` 指向 `http://localhost:5000`
 
 > 💡 **数据持久化**：数据库文件保存在 `./data/nav.db`，升级容器时不会丢失
 > 💡 **热更新前端**：前端文件通过卷映射，修改 `./frontend/` 下的文件后立即生效
 
+### 🔑 修改密码 / Change Password
+
+**方式 1️⃣ 管理后台在线修改（推荐）**
+
+登录管理后台 → 侧边栏 → **🔑 修改密码**，输入旧密码和新密码即可。
+
+**方式 2️⃣ Docker exec 命令行修改**
+
+```bash
+docker exec -it ai-agent-nav python -c "
+import sqlite3, hashlib
+db = sqlite3.connect('/app/data/nav.db')
+new_pw = hashlib.sha256('你的新密码'.encode()).hexdigest()
+db.execute('UPDATE admins SET password_hash=? WHERE username=?', (new_pw, 'admin'))
+db.commit(); db.close()
+print('✅ 密码修改成功')
+"
+```
+
+**方式 3️⃣ 直接操作数据库文件**
+
+```bash
+python -c "
+import sqlite3, hashlib
+db = sqlite3.connect('/vol1/1000/docker/ai-agent-nav/data/nav.db')
+pw = hashlib.sha256('你的新密码'.encode()).hexdigest()
+db.execute('UPDATE admins SET password_hash=? WHERE username=?', (pw, 'admin'))
+db.commit(); db.close()
+print('✅ 密码修改成功')
+"
+```
+
+> ⚠️ 默认密码为 **admin123**，建议首次登录后立即修改
+
 ---
 
 ## 🔧 功能详情 / Features
-项目包含两个版本的首页——根目录的 index.html 是纯静态版本（数据硬编码），frontend/index.html 才是 API 驱动的动态版本。Flask 的 / 路由 serve 的是 frontend/index.html，所以实际运行的是动态版。
-这是一个经典的全栈小项目范本：一个 Flask 文件承担所有后端逻辑（API + 静态文件托管），两个 HTML 文件构成前端（用户端 + 管理端），SQLite 做持久化。麻雀虽小五脏俱全——CRUD、认证、主题切换、响应式都有覆盖。
+
 ### 🏠 公开导航页 / Public Navigation
 
 - 页面加载时通过 `fetch()` 调用后端 API 获取数据  
@@ -263,6 +296,8 @@ sudo systemctl enable docker
 | | | Update site |
 | DELETE | `/api/admin/sites/:id` | 删除站点 |
 | | | Delete site |
+| POST | `/api/admin/change-password` | 修改密码（需旧密码+新密码） |
+| | | Change password (requires old + new password) |
 
 **登录示例 / Login Example:**
 
@@ -327,7 +362,7 @@ CREATE TABLE admins (
 | | AI Search & Productivity | |
 | 6 | 🎵 AI 音频 / 语音 | 5 |
 | | AI Audio / Speech | |
-| 7 | 📦 AI 开源社区 & 模型 | 7 |
+| 7 | 📦 AI 开源社区 & 模型 | 8 |
 | | AI Open Source & Models | |
 | 8 | 📰 AI 资讯 & 社区 | 5 |
 | | AI News & Community | |
@@ -337,7 +372,7 @@ CREATE TABLE admins (
 | | AI API Aggregators | |
 | 11 | 🎯 AI 设计工具 | 4 |
 | | AI Design Tools | |
-| | **合计 / Total** | **78** |
+| | **合计 / Total** | **79** |
 
 ---
 
