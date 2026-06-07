@@ -102,7 +102,7 @@ env FLASK_RUN_PORT=8080 python app.py
 ---
 
 ## 🔧 功能详情 / Features
-
+项目包含两个版本的首页——根目录的 index.html 是纯静态版本（数据硬编码），frontend/index.html 才是 API 驱动的动态版本。Flask 的 / 路由 serve 的是 frontend/index.html，所以实际运行的是动态版。
 ### 🏠 公开导航页 / Public Navigation
 
 - 页面加载时通过 `fetch()` 调用后端 API 获取数据  
