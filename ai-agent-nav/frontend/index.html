@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>国内 AI & Agent 导航</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --card: #1a1a2e;
+    --card-hover: #23234a;
+    --accent: #7c5cfc;
+    --accent-glow: rgba(124,92,252,0.3);
+    --text: #e8e8f0;
+    --text-secondary: #9898b0;
+    --border: #2a2a45;
+    --header-bg: linear-gradient(180deg, rgba(124,92,252,0.08) 0%, transparent 100%);
+  }
+  .light-theme {
+    --bg: #f5f5fa;
+    --card: #ffffff;
+    --card-hover: #f0eefb;
+    --accent: #6d4ff2;
+    --accent-glow: rgba(109,79,242,0.25);
+    --text: #1a1a2e;
+    --text-secondary: #6b6b80;
+    --border: #e0dff0;
+    --header-bg: linear-gradient(180deg, rgba(109,79,242,0.06) 0%, transparent 100%);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  header {
+    text-align: center;
+    padding: 48px 20px 32px;
+    background: var(--header-bg);
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header h1 {
+    font-size: 2.4em;
+    font-weight: 800;
+    background: linear-gradient(135deg, #7c5cfc, #a78bfa, #6ee7ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  header p { color: var(--text-secondary); margin-top: 8px; font-size: 1.05em; }
+  .admin-link {
+    position: absolute; top: 16px; right: 20px;
+    color: var(--text-secondary); text-decoration: none; font-size: 0.85em;
+    padding: 6px 14px; border: 1px solid var(--border); border-radius: 8px;
+    transition: all 0.2s;
+  }
+  .admin-link:hover { border-color: var(--accent); color: var(--accent); }
+  .theme-btn {
+    position: absolute; top: 16px; left: 20px;
+    background: var(--card); border: 1px solid var(--border); color: var(--text-secondary);
+    padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.85em;
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .stats {
+    display: flex; justify-content: center; gap: 32px;
+    padding: 16px 20px; background: var(--card);
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-item { text-align: center; }
+  .stat-item .num { font-size: 1.4em; font-weight: 700; color: var(--accent); }
+  .stat-item .label { font-size: 0.85em; color: var(--text-secondary); }
+  .container { max-width: 1200px; margin: 0 auto; padding: 32px 20px; }
+
+  /* Loading & Error */
+  .loading { text-align: center; padding: 60px; color: var(--text-secondary); }
+  .loading .spinner {
+    display: inline-block; width: 40px; height: 40px;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin-bottom: 12px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .error { text-align: center; padding: 40px; color: #ff6b6b; }
+
+  .category { margin-bottom: 36px; }
+  .category-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 16px; padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+  }
+  .category-header .icon { font-size: 1.5em; }
+  .category-header h2 { font-size: 1.2em; font-weight: 600; color: var(--text); }
+  .category-header .count {
+    margin-left: auto; font-size: 0.85em; color: var(--text-secondary);
+    background: var(--card); padding: 2px 12px; border-radius: 12px;
+  }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px; transition: all 0.25s ease; cursor: pointer;
+    text-decoration: none; display: flex; flex-direction: column; gap: 6px;
+  }
+  .card:hover {
+    background: var(--card-hover); border-color: var(--accent);
+    transform: translateY(-2px); box-shadow: 0 8px 24px var(--accent-glow);
+  }
+  .card .name {
+    font-size: 1em; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card .name .badge {
+    font-size: 0.65em; font-weight: 500; padding: 1px 8px; border-radius: 6px;
+    background: var(--accent); color: #fff; opacity: 0.8;
+  }
+  .card .desc { font-size: 0.85em; color: var(--text-secondary); line-height: 1.5; }
+  .card .domain {
+    font-size: 0.75em; color: var(--accent); opacity: 0.6; margin-top: auto;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+  }
+  .card:hover .domain { opacity: 1; }
+  footer { text-align: center; padding: 32px 20px; color: var(--text-secondary); font-size: 0.85em; border-top: 1px solid var(--border); }
+
+  @media (max-width: 600px) {
+    header h1 { font-size: 1.6em; }
+    .grid { grid-template-columns: 1fr; }
+    .stats { gap: 16px; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🤖 国内 AI & Agent 导航</h1>
+  <p>收录国内主流人工智能平台 · AI Agent · 开发工具 · 创作工具</p>
+  <button class="theme-btn" id="themeToggle" onclick="toggleTheme()">🌙 深色</button>
+  <a class="admin-link" href="/admin">⚙️ 管理</a>
+</header>
+
+<div class="stats" id="statsBar">
+  <div class="stat-item"><div class="num">—</div><div class="label">收录站点</div></div>
+  <div class="stat-item"><div class="num">—</div><div class="label">分类</div></div>
+  <div class="stat-item"><div class="num">🔥</div><div class="label">持续更新</div></div>
+</div>
+
+<div class="container" id="content">
+  <div class="loading">
+    <div class="spinner"></div>
+    <div>正在加载数据...</div>
+  </div>
+</div>
+
+<footer>
+  <p>🤖 国内 AI & Agent 导航 · 数据来自后端API · 持续更新</p>
+</footer>
+
+<script>
+const API = window.location.origin;
+
+async function loadData() {
+  try {
+    // 并行获取统计数据
+    const [catsRes, statsRes] = await Promise.all([
+      fetch(`${API}/api/categories`),
+      fetch(`${API}/api/stats`)
+    ]);
+    const categories = await catsRes.json();
+    const stats = await statsRes.json();
+
+    // 更新统计栏
+    document.querySelector('.stat-item:nth-child(1) .num').textContent = stats.total_sites;
+    document.querySelector('.stat-item:nth-child(2) .num').textContent = stats.total_categories;
+
+    // 渲染分类和站点
+    const container = document.getElementById('content');
+    container.innerHTML = categories.map(cat => `
+      <div class="category">
+        <div class="category-header">
+          <span class="icon">${cat.icon}</span>
+          <h2>${cat.name}</h2>
+          <span class="count">${cat.count}</span>
+        </div>
+        <div class="grid">
+          ${cat.sites.map(site => `
+            <a class="card" href="${site.url}" target="_blank" rel="noopener">
+              <div class="name">
+                ${site.name}
+                ${site.badge ? `<span class="badge">${site.badge}</span>` : ''}
+              </div>
+              <div class="desc">${site.description}</div>
+              <div class="domain">${site.domain}</div>
+            </a>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    document.getElementById('content').innerHTML = `
+      <div class="error">
+        <p>❌ 数据加载失败</p>
+        <p style="color:var(--text-secondary);font-size:0.9em;margin-top:8px;">${err.message}</p>
+      </div>`;
+  }
+}
+
+loadData();
+
+// ─── Theme Toggle ──────────────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('light-theme');
+  const isLight = document.body.classList.contains('light-theme');
+  document.getElementById('themeToggle').innerHTML = isLight ? '☀️ 浅色' : '🌙 深色';
+  localStorage.setItem('ai_nav_theme', isLight ? 'light' : 'dark');
+}
+
+// 读取保存的主题
+(function() {
+  const saved = localStorage.getItem('ai_nav_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-theme');
+    document.getElementById('themeToggle').innerHTML = '☀️ 浅色';
+  }
+})();
+</script>
+</body>
+</html>
