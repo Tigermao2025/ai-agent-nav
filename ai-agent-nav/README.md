@@ -69,6 +69,7 @@ python app.py
 python
 复制
 app.run(host='0.0.0.0', port=5000, debug=True)
+
 改端口有 3 种方法：
 
 方法 1️⃣ 直接改代码（最简单）
