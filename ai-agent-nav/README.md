@@ -43,7 +43,7 @@ F:\ai-agent-nav\
 
 ```bash
 # 1. 进入项目目录
-cd /f/ai-agent-nav/backend
+cd /ai-agent-nav/backend
 
 # 2. 安装依赖（首次运行）
 pip install flask flask-cors
