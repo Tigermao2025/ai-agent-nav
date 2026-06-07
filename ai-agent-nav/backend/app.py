@@ -118,6 +118,33 @@ def admin_verify():
     info = TOKENS.get(token)
     return jsonify({"ok": True, "username": info['username']})
 
+@app.route('/api/admin/change-password', methods=['POST'])
+@require_auth
+def admin_change_password():
+    data = request.get_json()
+    old_pw = data.get('old_password', '')
+    new_pw = data.get('new_password', '')
+    if not old_pw or not new_pw:
+        return jsonify({"error": "旧密码和新密码不能为空"}), 400
+    if len(new_pw) < 6:
+        return jsonify({"error": "新密码至少6位"}), 400
+
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    username = TOKENS[token]['username']
+
+    db = get_db()
+    admin = db.execute("SELECT * FROM admins WHERE username=? AND password_hash=?",
+                       (username, hash_password(old_pw))).fetchone()
+    if not admin:
+        db.close()
+        return jsonify({"error": "旧密码错误"}), 403
+
+    db.execute("UPDATE admins SET password_hash=? WHERE id=?",
+               (hash_password(new_pw), admin['id']))
+    db.commit()
+    db.close()
+    return jsonify({"ok": True, "message": "密码修改成功"})
+
 # ─── Admin: Categories CRUD ─────────────────────────────────────────
 
 @app.route('/api/admin/categories', methods=['GET'])
